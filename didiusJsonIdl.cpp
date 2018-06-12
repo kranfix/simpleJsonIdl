@@ -42,7 +42,8 @@ void DataFrame::Dht(float t, float h){
 
   if(!t_nan){
     var = String(t);
-    this->n += sprintf(buf,",\"t\":%s",var.c_str());
+    buf = this->buf + this->n;
+    this->n += sprintf(buf,"\"t\":%s",var.c_str());
     if(!h_nan){
       this->buf[this->n] = ',';
       this->n++;
@@ -51,6 +52,7 @@ void DataFrame::Dht(float t, float h){
   
   if(!h_nan){
     var = String(h);
+    buf = this->buf + this->n;
     this->n += sprintf(buf,"\"h\":%s",var.c_str());
   }
 
