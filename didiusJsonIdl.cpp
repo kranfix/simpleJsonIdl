@@ -4,27 +4,27 @@
 
 DataFrame::DataFrame(char * buf, char * type, char * id){
   this->buf = buf;
-  this->off = sprintf(buf,"{\"dev\":\"%s/%s\"",type,id);
-  this->n = this->off;
+  off = sprintf(buf,"{\"dev\":\"%s/%s\"",type,id);
+  n = off;
 }
 
 void DataFrame::reset(){
-  this->n = this->off;
+  n = off;
 }
 
 int DataFrame::len(){
-  return this->n;
+  return n;
 }
 
 void DataFrame::addInt(char * key, int val){
-  char * buf = this->buf + this->n;
-  this->n += sprintf(buf,",\"%s\":%d",key,val);
+  n += sprintf(&buf[n],",\"%s\":%d",key,val);
 }
 
 void DataFrame::addFloat(char * key, float val){
-  char * buf = this->buf + this->n;
-  String S = String(val);
-  this->n += sprintf(buf,",\"%s\":%s",key,S.c_str());
+  volatile String S = String(val);
+  n += sprintf(&buf[n],",\"%s\":",key);
+  S.toCharArray(&buf[n], S.length());
+  n += S.length() - 1;
 }
 
 void DataFrame::Dht(float t, float h){
@@ -61,11 +61,14 @@ void DataFrame::Dht(float t, float h){
 }
 
 void DataFrame::Acc(float x, float y, float z){
+  String X = isnan(x)? String("\"NaN\"") : String(x);
+  String Y = isnan(y)? String("\"NaN\"") : String(y);
+  String Z = isnan(z)? String("\"NaN\"") : String(z);
 
+  n += sprintf(buf+n,",\"acc\":[%s,%s,%s]",X.c_str(),Y.c_str(),Z.c_str());
 }
 
 void DataFrame::close(){
-  char * buf = this->buf + this->n;
-  this->n += sprintf(buf,"}\n");
-  return this->buf;
+  n += sprintf(&buf[n],"}\n");
+  return buf;
 }
